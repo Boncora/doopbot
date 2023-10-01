@@ -2,5 +2,6 @@ from features.responses import *
 
 commands = {
     'hey': hey,
-    'abc': abc
+    'abc': abc,
+    'qt': qt
 }
