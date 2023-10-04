@@ -25,11 +25,17 @@ class doopBot:
             'pushChannelMessage': self.new_message,
         }
         self.dj_queue = []
-
+        self.quick_themes = QuickThemes()
+        
     def update_votes(self, data):
         self.votes = data['params']
         
     def new_message(self, data):
+        command = data['params']['payload']
+        if command in commands:
+            response = commands[command](data)
+            if isinstance(response, str):
+                self.send_message(response)
         self.messages.append(data['params'])
         if len(self.messages) > 100:
             self.messages.pop(0)
@@ -50,7 +56,7 @@ class doopBot:
     def now_playing(self, data):
         self.now_playing = data['params']
     
-    def on_error(self, error):
+    def on_error(self, ws, data):
         pass
 
     def stay_awake(self, data=None):
@@ -63,7 +69,18 @@ class doopBot:
         }
         return stay_awake_data
     
-    def on_open(self):
+    def send_message(self, message):
+        send_message = {
+            'jsonrpc': '2.0',
+            'method': 'pushMessage',
+            'params': {
+                'payload': message
+            }
+        }
+        self.ws.send(json.dumps(send_message))
+        
+    
+    def on_open(self, data):
         print('trying to join')
         # join the specified channel when the connection is established
         join_data = {
@@ -76,7 +93,7 @@ class doopBot:
         self.ws.send(json.dumps(join_data))
         
 
-    def on_message(self, message):
+    def on_message(self, ws, message):
         print('on message')
         data = json.loads(message)
         if data.get('method') in self.event_handlers:
@@ -96,19 +113,9 @@ class doopBot:
 
 
 def main():
-    qt = QuickThemes()
-    print(qt.current_theme)
-    print(qt.next_theme)
-    qt.current_theme = qt.next_theme
-    qt.next_theme = qt.choose_theme()
-    print(qt.current_theme)
-    print(qt.next_theme)
-    qt.next_theme = qt.choose_theme()
-    print(qt.current_theme)
-    print(qt.next_theme)
-    # bot = doopBot()
-    # bot.run()
-    # print('test')
+    bot = doopBot()
+    bot.run()
+
 
 if __name__ == "__main__":
     main()

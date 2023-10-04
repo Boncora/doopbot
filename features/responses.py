@@ -1,7 +1,25 @@
-
+from .quick_themes import QuickThemes
 
 def abc(data):
-    print(f'hello hello {data}')
+    return('hello. my name is han-tyumi')
     
 def hey(data):
-    print(f'DATA {data}')
+    return f'DATA DATADATADATADATA{data}'
+    
+def qt(data):
+    qt = QuickThemes()
+    return qt
+
+
+
+
+
+
+
+
+
+
+
+
+
+

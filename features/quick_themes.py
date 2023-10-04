@@ -1,7 +1,7 @@
 import random
 import yaml
 
-            
+
 class QuickThemes:
     def __init__(self, leader=None, dj_queue=None):
         self.themes = self.theme_list('qt_themes.yml')
@@ -13,10 +13,13 @@ class QuickThemes:
 
     def submit_theme(self, theme):
         self.user_theme_list.append(theme)
-        
+
+    def submit_theme(self, theme):
+        self.user_theme_list.append(theme)
+
     def choose_theme(self):
         """
-        Selects a theme. If manual 
+        Selects a theme. If any themes were submitted in the chat, prioritize those first. 
         """
         if self.user_theme_list:
             selected_theme = self.user_theme_list.pop()
