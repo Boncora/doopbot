@@ -26,7 +26,7 @@ class doopBot:
         }
         self.dj_queue = []
         self.quick_themes = QuickThemes()
-
+        
     def update_votes(self, data):
         self.votes = data['params']
         
