@@ -5,7 +5,7 @@ import os
 from pprint import pprint
 from features.quick_themes import QuickThemes
 from config.commands import commands
-
+import re
 
 class doopBot:
     def __init__(self):
@@ -25,25 +25,32 @@ class doopBot:
             'pushChannelMessage': self.new_message,
         }
         self.dj_queue = []
-        self.quick_themes = QuickThemes()
+        self.users = {}
+        self.qt = QuickThemes()
         
     def update_votes(self, data):
         self.votes = data['params']
         
     def new_message(self, data):
+        print('new message')
         command = data['params']['payload']
-        if command in commands:
-            response = commands[command](data)
-            if isinstance(response, str):
-                self.send_message(response)
+        print(f"{self.users.get(data['params']['userId'])}: {command}")
+        if data['params'].get('userName') == 'doop':
+            if command in commands:
+                response = commands[command](self, data)
+                if isinstance(response, str):
+                    self.send_message(response)
         self.messages.append(data['params'])
         if len(self.messages) > 100:
             self.messages.pop(0)
-        if self.messages[-1] == 'something':
-            pass
+
         
     def update_users(self, data):
-        self.users = data['params']['users']
+        """
+        I think I'll want to mostly use this to correlate IDs to display names..
+        converted to a dict.
+        """
+        self.users = {user['_id']: user for user in data['params']['users']}
 
     def update_song_history(self, data):
         self.song_history.append(data['params'])
@@ -52,6 +59,7 @@ class doopBot:
 
     def update_dj_queue(self, data):
         self.dj_queue = data['params']['djs']
+        self.qt.handle_qt_dj_queue(self)
         
     def now_playing(self, data):
         self.now_playing = data['params']
@@ -90,7 +98,14 @@ class doopBot:
             },
             'id': 1
         }
+        bot_profile = {
+            "method": "editUser",
+            "params": {
+                "image": "https://i.imgur.com/Ysm7Y6p.jpeg"
+            }
+        }
         self.ws.send(json.dumps(join_data))
+        self.ws.send(json.dumps(bot_profile))
         
 
     def on_message(self, ws, message):
@@ -103,7 +118,7 @@ class doopBot:
             print(data.get('method'))
 
     def run(self):
-        websocket.enableTrace(True)
+        #websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(f'wss://app.rvrb.one/ws-bot?apiKey={self.rvrb_api_key}',
                                 on_error=self.on_error,
                                 on_open=self.on_open,
