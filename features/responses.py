@@ -19,7 +19,7 @@ def qtstart(bot, data):
             bot.qt.current_theme = bot.qt.choose_theme()
             bot.qt.next_theme = bot.qt.choose_theme()
             username = bot.users[bot.qt.leader]['displayName']
-            return f"🍕🍺::Quick Themes has begun!:: The theme is {bot.qt.current_theme} (starting with {username}'s spin). On deck is {bot.qt.next_theme}🍕🍺 IGNORE THIS.. I'm just testing.. thanks.."
+            return f"🍕Quick Themes has begun!🍺<hr>🍕The theme is {bot.qt.current_theme} (starting with {username}'s spin)🍺<hr>🍕On deck is {bot.qt.next_theme}🍺"
 
 
 

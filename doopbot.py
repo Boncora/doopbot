@@ -60,10 +60,15 @@ class doopBot:
     def update_dj_queue(self, data):
         self.dj_queue = data['params']['djs']
         self.qt.handle_qt_dj_queue(self)
-        
+
+    def update_now_playing(self, data):
+        self.now_playing = 'Whatever.'
+        self.qt.handle_now_playing(self)
+
     def now_playing(self, data):
         self.now_playing = data['params']
-    
+        self.qt.handle_song_change(self)
+
     def on_error(self, ws, data):
         pass
 
