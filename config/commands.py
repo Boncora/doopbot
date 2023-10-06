@@ -1,8 +1,9 @@
 from features.responses import *
 
 commands = {
-    'hey': hey,
-    'abc': abc,
-    'qtstart': qtstart,
-    
+    #'qtstart': qtstart,
+    'qt': qt,
+    'qt-end': qt_end,
+    'qt-skip': qt_skip,
+    'qt-set-theme': qt_set_theme
 }

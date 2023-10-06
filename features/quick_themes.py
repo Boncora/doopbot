@@ -15,9 +15,6 @@ class QuickThemes:
     def submit_theme(self, theme):
         self.user_theme_list.append(theme)
 
-    def submit_theme(self, theme):
-        self.user_theme_list.append(theme)
-
     def choose_theme(self):
         """
         Selects a theme. If any themes were submitted in the chat, prioritize those first. 
@@ -68,22 +65,26 @@ class QuickThemes:
         if bot.qt.leader not in bot.dj_queue and bot.qt.leader != None:
             if bot.qt.active:
                 if len(bot.dj_queue) == bot.qt.leader_queue_position:
-                    print('check 1')
                     # Handle if the leader steps down while at the end of the queue. The leader should become the user currently spinning (index 0)...
                     # updateChannelDjs --> updateChannelHistory--> playChannelTrack..
                     # if leader steps down while DJing updateChannelDjs happens first, 
                     bot.qt.leader = bot.dj_queue[0]
                 else:
-                    print('check 2')
                     bot.qt.leader = bot.dj_queue[bot.qt.leader_queue_position]
                 bot.send_message(f"🍕The Quick Themes leader stepped down🍺<hr>🍕The new leader is {bot.users[bot.qt.leader]['displayName']}🍺")
             else:
-                print('check 3')
                 bot.qt.leader = None
                 bot.send_message(f"🍕The Quick Themes leader stepped down before it started. Someone else try starting it...")
                 return
         if bot.qt.leader != None:
             bot.qt.leader_queue_position = bot.dj_queue.index(bot.qt.leader)
+        if not bot.dj_queue:
+            bot.qt.leader = None
+            bot.qt.active = False
+            bot.qt.current_theme = None
+            bot.qt.next_theme = None
+            return f"🍕Quick ⚡ Themes has ended🍺<hr>Thanks for hanging out with us!"
+            
 
 
 

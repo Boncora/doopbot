@@ -32,14 +32,17 @@ class doopBot:
         self.votes = data['params']
         
     def new_message(self, data):
-        print('new message')
-        command = data['params']['payload']
-        print(f"{self.users.get(data['params']['userId'])}: {command}")
-        if data['params'].get('userName') == 'doop':
+        trigger_prefix = '+'
+        message = data['params']['payload'].strip()
+        print(f"{self.users[data['params']['userId']]['displayName']}: {message}")
+        if message.startswith(trigger_prefix):
+            command = message[1:].lower().split()[0]
             if command in commands:
                 response = commands[command](self, data)
                 if isinstance(response, str):
                     self.send_message(response)
+            else:
+                self.send_message("I am a black hole shitting into the void")
         self.messages.append(data['params'])
         if len(self.messages) > 100:
             self.messages.pop(0)
@@ -72,6 +75,17 @@ class doopBot:
     def on_error(self, ws, data):
         pass
 
+    def edit_channel(self, title='🍕Pizza & Beer🍺'):
+        edit_channel = {
+            'jsonrpc': '2.0',
+            'method': 'editChannel',
+            'params': {
+                'title': title
+            }
+        }
+        self.ws.send(json.dumps(edit_channel))
+    
+
     def stay_awake(self, data=None):
         stay_awake_data = {
             'jsonrpc': '2.0',
@@ -94,7 +108,7 @@ class doopBot:
         
     
     def on_open(self, data):
-        print('trying to join')
+        print('Joining the room.')
         # join the specified channel when the connection is established
         join_data = {
             'method': 'join',
@@ -106,7 +120,8 @@ class doopBot:
         bot_profile = {
             "method": "editUser",
             "params": {
-                "image": "https://i.imgur.com/Ysm7Y6p.jpeg"
+                "image": "https://i.imgur.com/Ysm7Y6p.jpeg",
+                "bio": "command prefix is +",
             }
         }
         self.ws.send(json.dumps(join_data))
@@ -114,7 +129,6 @@ class doopBot:
         
 
     def on_message(self, ws, message):
-        print('on message')
         data = json.loads(message)
         if data.get('method') in self.event_handlers:
             response = self.event_handlers[data['method']](data)
