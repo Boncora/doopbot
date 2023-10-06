@@ -26,22 +26,20 @@ class QuickThemes:
             selected_theme = self.user_theme_list.pop()
             with open('config/manual_themes.yml', 'w') as f:
                 yaml.dump(self.user_theme_list, f)
-            return selected_theme
+            return selected_theme.upper()
         if not self.themes:
             #rotate all used themes back into the list.
             self.themes = self.used_themes
             self.used_themes = []
         random_theme = random.choice(self.themes)
         index = self.themes.index(random_theme)
-        print(len(self.themes))
         selected_theme = self.themes.pop(index)
-        print(len(self.themes))
         with open('config/qt_themes.yml', 'w') as f:
             yaml.dump(self.themes, f)
         with open('config/used_themes.yml', 'w') as f:
             yaml.dump(self.used_themes, f)
         self.used_themes.append(selected_theme)
-        return selected_theme
+        return selected_theme.upper()
     
     def theme_list(self, filename):
         with open(f'config/{filename}', 'r') as yaml_file:
@@ -50,7 +48,7 @@ class QuickThemes:
             theme_list = []
         return theme_list
 
-    def handle_qt_dj_queue(self, bot):
+    def handle_song_change(self, bot):
         if bot.dj_queue[0] == bot.qt.leader:
             if not bot.qt.active:
                 # The leader triggers QT with the qtstart command, but it doesn't begin until their first spin
@@ -60,12 +58,32 @@ class QuickThemes:
                 # The game is in progress. Cycle themes each time the leader spins.
                 bot.qt.current_theme = bot.qt.next_theme
                 bot.qt.next_theme = bot.qt.choose_theme()
-                bot.send_message(f'New theme is {bot.qt.current_theme}. On deck is {bot.qt.next_theme}')
-        if bot.qt.leader not in bot.dj_queue:
-            # Reassign the leader if the user steps down for any reason.
-            bot.qt.leader = bot.dj_queue[bot.qt.leader_queue_position+1]
-        bot.qt.leader_queue_position = bot.dj_queue.index(bot.qt.leader)
-                
-            
+                bot.send_message(f'🍕New theme is {bot.qt.current_theme}🍺<hr>🍕On deck is {bot.qt.next_theme}🍺')
+        
+    def handle_qt_dj_queue(self, bot):
+        """
+        This needs to work with handle_song_change. The leader needs to be reassigned to the next user.
+        """
+
+        if bot.qt.leader not in bot.dj_queue and bot.qt.leader != None:
+            if bot.qt.active:
+                if len(bot.dj_queue) == bot.qt.leader_queue_position:
+                    print('check 1')
+                    # Handle if the leader steps down while at the end of the queue. The leader should become the user currently spinning (index 0)...
+                    # updateChannelDjs --> updateChannelHistory--> playChannelTrack..
+                    # if leader steps down while DJing updateChannelDjs happens first, 
+                    bot.qt.leader = bot.dj_queue[0]
+                else:
+                    print('check 2')
+                    bot.qt.leader = bot.dj_queue[bot.qt.leader_queue_position]
+                bot.send_message(f"🍕The Quick Themes leader stepped down🍺<hr>🍕The new leader is {bot.users[bot.qt.leader]['displayName']}🍺")
+            else:
+                print('check 3')
+                bot.qt.leader = None
+                bot.send_message(f"🍕The Quick Themes leader stepped down before it started. Someone else try starting it...")
+                return
+        if bot.qt.leader != None:
+            bot.qt.leader_queue_position = bot.dj_queue.index(bot.qt.leader)
+
 
 
