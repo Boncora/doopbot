@@ -4,6 +4,7 @@ import time
 import os
 from pprint import pprint
 from features.quick_themes import QuickThemes
+from features import responses
 from config.commands import commands
 import re
 
@@ -27,6 +28,7 @@ class doopBot:
         self.dj_queue = []
         self.users = {}
         self.qt = QuickThemes()
+        self.strawpoll_id = None
         
     def update_votes(self, data):
         self.votes = data['params']
@@ -64,26 +66,27 @@ class doopBot:
         self.dj_queue = data['params']['djs']
         self.qt.handle_qt_dj_queue(self)
 
-    def update_now_playing(self, data):
-        self.now_playing = 'Whatever.'
-        self.qt.handle_now_playing(self)
-
     def now_playing(self, data):
         self.now_playing = data['params']
+        if self.strawpoll_id:
+            result = responses.poll_results(self)
+            self.send_message(result)
+        # self.qt.handle_now_playing(self)
         self.qt.handle_song_change(self)
 
     def on_error(self, ws, data):
         pass
 
-    def edit_channel(self, title='🍕Pizza & Beer🍺'):
-        edit_channel = {
-            'jsonrpc': '2.0',
-            'method': 'editChannel',
-            'params': {
-                'title': title
-            }
-        }
-        self.ws.send(json.dumps(edit_channel))
+    # def edit_channel(self, title='🍕Pizza & Beer🍺'):
+    #     edit_channel = {
+    #         'jsonrpc': '2.0',
+    #         'method': 'editChannel',
+    #         'params': {
+    #             'title': title,
+    #             'slug': 'rock'
+    #         }
+    #     }
+    #     self.ws.send(json.dumps(edit_channel))
     
 
     def stay_awake(self, data=None):
@@ -105,8 +108,8 @@ class doopBot:
             }
         }
         self.ws.send(json.dumps(send_message))
-        
-    
+
+
     def on_open(self, data):
         print('Joining the room.')
         # join the specified channel when the connection is established
@@ -121,12 +124,19 @@ class doopBot:
             "method": "editUser",
             "params": {
                 "image": "https://i.imgur.com/Ysm7Y6p.jpeg",
-                "bio": "command prefix is +",
+                "bio": """  +qt\n+qt-end\\n+qt-set-theme THEME NAME\n+qt-skip\n+vote
+                            +vote --- creates a strawpoll using the last two songs played.
+                            +vote things,separated,by,commas --- creates a strawpoll with the requested options
+                            +vote # --- Creates a strawpoll based on the last # of played songs
+                            +vote --- spams the strawpoll link 4 times
+                            +vote cancel/stop --- Cancels the strawpoll, results will not be posted at the end of the song. Allows for a new strawpoll to be created.""",
             }
         }
         self.ws.send(json.dumps(join_data))
         self.ws.send(json.dumps(bot_profile))
         
+
+
 
     def on_message(self, ws, message):
         data = json.loads(message)
@@ -137,19 +147,16 @@ class doopBot:
             print(data.get('method'))
 
     def run(self):
-        #websocket.enableTrace(True)
+        websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(f'wss://app.rvrb.one/ws-bot?apiKey={self.rvrb_api_key}',
                                 on_error=self.on_error,
                                 on_open=self.on_open,
                                 on_message=self.on_message,)
         self.ws.run_forever(ping_interval=30)
-    
-
 
 def main():
     bot = doopBot()
     bot.run()
-
 
 if __name__ == "__main__":
     main()
