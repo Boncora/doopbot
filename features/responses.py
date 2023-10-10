@@ -1,20 +1,11 @@
 from .quick_themes import QuickThemes
+from . import strawpoll
+import re
+from ..config import commands
 
-
-# def qtstart(bot, data):
-#     if bot.qt.active:
-#         return "Quick Themes is already running!"
-#     else:
-#         if data['params']['userId'] not in bot.dj_queue:
-#             return f"You need to be in the queue to start Quick Themes!"
-#         else:
-#             bot.qt.leader = data['params']['userId']
-#             bot.qt.caboose = bot.dj_queue[-1]
-#             bot.qt.leader_queue_position = bot.dj_queue.index(bot.qt.leader) # If the leader steps down.. I'll need a way to auto-assign a new leader. By tracking the index I can assign the next user in the queue to the leader spot.
-#             bot.qt.current_theme = bot.qt.choose_theme()
-#             bot.qt.next_theme = bot.qt.choose_theme()
-#             username = bot.users[bot.qt.leader]['displayName']
-#             return f"🍕Quick Themes has begun!🍺<hr>🍕The theme is {bot.qt.current_theme} (starting with {username}'s spin)🍺<hr>🍕On deck is {bot.qt.next_theme}🍺"
+def help(bot, data):
+    potential_commands = commands.keys()
+    return "<br>".join(potential_commands)
 
 def qt(bot, data):
     if bot.qt.leader and bot.qt.active == False:
@@ -65,5 +56,38 @@ def qt_set_theme(bot, data):
         return f"🍕On-deck randomly selected and changed to {bot.qt.next_theme}🍺"
     
     
-    
-            
+def create_strawpoll(bot, data):
+    message = data['params']['payload'].strip()
+    if message == '+vote cancel' or message == '+vote stop':
+        bot.strawpoll_id = None
+        return "strawpoll cancelled"
+    if bot.strawpoll_id:
+        return f"https://strawpoll.com/{bot.strawpoll_id}<br>"*4
+    if message == '+vote':
+        if len(bot.song_history) >= 2:
+            options = [f"{song['track']['name']}" for song in bot.song_history[:2]]
+        else:
+            return "I don't remember what songs were played. Please provide me a comma-separated list of options to use!"
+    elif ',' in message:
+        options = message[6:].split(',')
+    elif re.search('\d+', message):
+        amount_of_options = int(re.search('\d+', message).group())
+        if amount_of_options >= len(bot.song_history):
+            options = [f"{song['track']['name']}" for song in bot.song_history[:amount_of_options]]
+        else:
+            return f"Sorry. I've only tracked the last {len(bot.song_history)} songs"
+    poll = strawpoll.create_poll(options)
+    if "Error" not in poll:
+        bot.strawpoll_id = poll
+        return f"https://strawpoll.com/{bot.strawpoll_id}"
+    else:
+        return "Error creating strawpoll link"
+
+
+def poll_results(bot):
+    results = strawpoll.get_results(bot.strawpoll_id)
+    bot.strawpoll_id = None
+    #highest_vote = max([option['vote_count'] for option in results['poll_options']])
+    #winners = [option['value'] for option in results['poll_options'] if option['vote_count'] == highest_vote]
+    result_message = [f"{option['value']}--{option['vote_count']}" for option in results['poll_options']]
+    return '<br>'.join(result_message)
