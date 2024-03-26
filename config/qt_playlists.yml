@@ -1444,6 +1444,9 @@ test:
 testing:
   link: https://open.spotify.com/playlist/1EXR7fbOfrq69L10SApyVJ
   uri: spotify:playlist:1EXR7fbOfrq69L10SApyVJ
+testing123:
+  link: https://open.spotify.com/playlist/2RjGkHjRmDukKy68nzpIFh
+  uri: spotify:playlist:2RjGkHjRmDukKy68nzpIFh
 the big city:
   link: https://open.spotify.com/playlist/7nRlAK8JRz4r9JyD1cBrsn
   uri: spotify:playlist:7nRlAK8JRz4r9JyD1cBrsn
