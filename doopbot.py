@@ -71,22 +71,14 @@ class doopBot:
         if self.strawpoll_id:
             result = responses.poll_results(self)
             self.send_message(result)
+        responses.artist_announcements(self)
         # self.qt.handle_now_playing(self)
         self.qt.handle_song_change(self)
+        songs_played =[f"{i['playedBy']['displayName']}---{i['track']['name']}---{i['track']['artists'][0]['name']}" for i in self.song_history]
+
 
     def on_error(self, ws, data):
         pass
-
-    # def edit_channel(self, title='🍕Pizza & Beer🍺'):
-    #     edit_channel = {
-    #         'jsonrpc': '2.0',
-    #         'method': 'editChannel',
-    #         'params': {
-    #             'title': title,
-    #             'slug': 'rock'
-    #         }
-    #     }
-    #     self.ws.send(json.dumps(edit_channel))
     
 
     def stay_awake(self, data=None):
@@ -147,7 +139,7 @@ class doopBot:
             print(data.get('method'))
 
     def run(self):
-        websocket.enableTrace(True)
+        # websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(f'wss://app.rvrb.one/ws-bot?apiKey={self.rvrb_api_key}',
                                 on_error=self.on_error,
                                 on_open=self.on_open,

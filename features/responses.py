@@ -1,11 +1,11 @@
 from .quick_themes import QuickThemes
 from . import strawpoll
 import re
-from ..config import commands
+#from ..config import commands
 
-def help(bot, data):
-    potential_commands = commands.keys()
-    return "<br>".join(potential_commands)
+# def help(bot, data):
+#     potential_commands = commands.keys()
+#     return "<br>".join(potential_commands)
 
 def qt(bot, data):
     if bot.qt.leader and bot.qt.active == False:
@@ -65,7 +65,7 @@ def create_strawpoll(bot, data):
         return f"https://strawpoll.com/{bot.strawpoll_id}<br>"*4
     if message == '+vote':
         if len(bot.song_history) >= 2:
-            options = [f"{song['track']['name']}" for song in bot.song_history[:2]]
+            options = [f"{song['track']['name']}" for song in bot.song_history[-2:]]
         else:
             return "I don't remember what songs were played. Please provide me a comma-separated list of options to use!"
     elif ',' in message:
@@ -73,7 +73,7 @@ def create_strawpoll(bot, data):
     elif re.search('\d+', message):
         amount_of_options = int(re.search('\d+', message).group())
         if amount_of_options >= len(bot.song_history):
-            options = [f"{song['track']['name']}" for song in bot.song_history[:amount_of_options]]
+            options = [f"{song['track']['name']}" for song in bot.song_history[-amount_of_options:]]
         else:
             return f"Sorry. I've only tracked the last {len(bot.song_history)} songs"
     poll = strawpoll.create_poll(options)
@@ -91,3 +91,11 @@ def poll_results(bot):
     #winners = [option['value'] for option in results['poll_options'] if option['vote_count'] == highest_vote]
     result_message = [f"{option['value']}--{option['vote_count']}" for option in results['poll_options']]
     return '<br>'.join(result_message)
+
+def artist_announcements(bot):
+    gizzard_artists = ['bootleg gizzard', 'king gizzard']
+    now_playing_artists = [artist['name'].lower() for artist in bot.now_playing['track']['artists']]
+    for artist in now_playing_artists:
+        if artist in gizzard_artists:
+            bot.send_message('!kglw')
+            break
