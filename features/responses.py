@@ -65,7 +65,7 @@ def create_strawpoll(bot, data):
         return f"https://strawpoll.com/{bot.strawpoll_id}<br>"*4
     if message == '+vote':
         if len(bot.song_history) >= 2:
-            options = [f"{song['track']['name']}" for song in bot.song_history[-2:]]
+            options = [f"{song['track']['name']} -- {song['track']['artists'][-1]['name']} -- played by {song['playedBy']['displayName']}" for song in bot.song_history[-2:]]
         else:
             return "I don't remember what songs were played. Please provide me a comma-separated list of options to use!"
     elif ',' in message:
@@ -93,7 +93,7 @@ def poll_results(bot):
     return '<br>'.join(result_message)
 
 def artist_announcements(bot):
-    gizzard_artists = ['bootleg gizzard', 'king gizzard']
+    gizzard_artists = ['bootleg gizzard', 'king gizzard & the lizard wizard']
     now_playing_artists = [artist['name'].lower() for artist in bot.now_playing['track']['artists']]
     for artist in now_playing_artists:
         if artist in gizzard_artists:
