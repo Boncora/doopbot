@@ -7,6 +7,7 @@ from features.quick_themes import QuickThemes
 from features import responses
 from config.commands import commands
 import re
+import rel
 
 class doopBot:
     def __init__(self):
@@ -90,7 +91,17 @@ class doopBot:
             }
         }
         return stay_awake_data
-    
+
+    def send_upvote(self):
+        send_message = {
+            'jsonrpc': '2.0',
+            'method': 'pushMessage',
+            'params': {
+                'payload': message
+            }
+        }
+        self.ws.send(json.dumps(send_message))
+
     def send_message(self, message):
         send_message = {
             'jsonrpc': '2.0',
@@ -128,8 +139,6 @@ class doopBot:
         self.ws.send(json.dumps(bot_profile))
         
 
-
-
     def on_message(self, ws, message):
         data = json.loads(message)
         if data.get('method') in self.event_handlers:
@@ -144,11 +153,23 @@ class doopBot:
                                 on_error=self.on_error,
                                 on_open=self.on_open,
                                 on_message=self.on_message,)
-        self.ws.run_forever(ping_interval=30)
+        try:
+            self.ws.run_forever(dispatcher=rel, reconnect=5, ping_interval=30)
+            rel.signal(2, rel.abort)  # Keyboard Interrupt
+            rel.dispatch()
+        except KeyboardInterrupt:
+            print("Received KeyboardInterrupt. Stopping the bot.")
+            self.ws.close()
+
+
+    def stop(self):
+        self.ws.close()
 
 def main():
     bot = doopBot()
     bot.run()
+
+
 
 if __name__ == "__main__":
     main()
