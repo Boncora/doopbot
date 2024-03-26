@@ -1,6 +1,7 @@
 import random
 import yaml
-
+from . import spotify_bot
+import os
 
 class QuickThemes:
     def __init__(self):
@@ -10,11 +11,14 @@ class QuickThemes:
         self.user_theme_list = self.theme_list('manual_themes.yml')
         self.leader = None
         self.current_theme = None
+        self.current_theme_playlist = None
         self.next_theme = None
+        self.next_theme_playlist = None
 
     def submit_theme(self, theme):
         self.user_theme_list.append(theme)
 
+            
     def choose_theme(self):
         """
         Selects a theme. If any themes were submitted in the chat, prioritize those first. 
@@ -55,7 +59,11 @@ class QuickThemes:
                 # The game is in progress. Cycle themes each time the leader spins.
                 bot.qt.current_theme = bot.qt.next_theme
                 bot.qt.next_theme = bot.qt.choose_theme()
+                bot.qt.next_theme_playlist = spotify_bot.get_theme_playlist(bot.qt.next_theme)['link']
+                bot.qt.current_theme_playlist = spotify_bot.get_theme_playlist(bot.qt.current_theme)['link']
                 bot.send_message(f'🍕New theme is {bot.qt.current_theme}🍺<hr>🍕On deck is {bot.qt.next_theme}🍺')
+        if bot.qt.active:
+            spotify_bot.add_to_playlist(bot.qt.current_theme_playlist, bot.now_playing['track']['uri'])
         
     def handle_qt_dj_queue(self, bot):
         """
@@ -82,7 +90,9 @@ class QuickThemes:
             bot.qt.leader = None
             bot.qt.active = False
             bot.qt.current_theme = None
+            bot.qt.current_theme_playlist = None
             bot.qt.next_theme = None
+            bot.qt.next_theme_playlist = None
             return f"🍕Quick ⚡ Themes has ended🍺<hr>Thanks for hanging out with us!"
             
 

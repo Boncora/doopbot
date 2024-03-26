@@ -1,5 +1,6 @@
-from .quick_themes import QuickThemes
+# from .quick_themes import QuickThemes
 from . import strawpoll
+from . import spotify_bot
 import re
 #from ..config import commands
 
@@ -23,7 +24,14 @@ def qt(bot, data):
             bot.qt.leader_queue_position = bot.dj_queue.index(bot.qt.leader) # If the leader steps down.. I'll need a way to auto-assign a new leader. By tracking the index I can assign the next user in the queue to the leader spot.
             bot.qt.current_theme = bot.qt.choose_theme()
             bot.qt.next_theme = bot.qt.choose_theme()
+            bot.qt.next_theme_playlist = spotify_bot.get_theme_playlist(bot.qt.next_theme)['link']
+            bot.qt.current_theme_playlist = spotify_bot.get_theme_playlist(bot.qt.current_theme)['link']
             return f"🍕Quick Themes will start on {bot.users[bot.qt.leader]['displayName']}'s spin!🍺<hr>🍕The first theme is {bot.qt.current_theme}🍺<hr>🍕On-deck is {bot.qt.next_theme}🍺"
+
+def qt_playlist(bot, data):
+    return f"🍕{bot.qt.current_theme}--{bot.qt.current_theme_playlist}🍺<br>🍕{bot.qt.next_theme}--{bot.qt.next_theme_playlist}🍺"
+
+
 
 def qt_end(bot, data):
     if bot.qt.leader:
@@ -99,3 +107,4 @@ def artist_announcements(bot):
         if artist in gizzard_artists:
             bot.send_message('!kglw')
             break
+        

@@ -92,15 +92,15 @@ class doopBot:
         }
         return stay_awake_data
 
-    def send_upvote(self):
-        send_message = {
-            'jsonrpc': '2.0',
-            'method': 'pushMessage',
-            'params': {
-                'payload': message
-            }
-        }
-        self.ws.send(json.dumps(send_message))
+    # def send_upvote(self):
+    #     send_message = {
+    #         'jsonrpc': '2.0',
+    #         'method': 'pushMessage',
+    #         'params': {
+    #             'payload': message
+    #         }
+    #     }
+    #     self.ws.send(json.dumps(send_message))
 
     def send_message(self, message):
         send_message = {
