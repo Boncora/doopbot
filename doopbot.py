@@ -30,6 +30,9 @@ class doopBot:
         self.users = {}
         self.qt = QuickThemes()
         self.strawpoll_id = None
+        self.recording = False
+        self.recording_theme = None
+        self.recording_playlist = None
         
     def update_votes(self, data):
         self.votes = data['params']
@@ -37,7 +40,8 @@ class doopBot:
     def new_message(self, data):
         trigger_prefix = '+'
         message = data['params']['payload'].strip()
-        print(f"{self.users[data['params']['userId']]['displayName']}: {message}")
+        if data['params']['userName'] != 'RVRB':
+            print(f"{data['params']['userName']}: {message}")
         if message.startswith(trigger_prefix):
             command = message[1:].lower().split()[0]
             if command in commands:
@@ -73,12 +77,15 @@ class doopBot:
             result = responses.poll_results(self)
             self.send_message(result)
         responses.artist_announcements(self)
-        # self.qt.handle_now_playing(self)
+        if self.recording:
+            responses.auto_add(self)
         self.qt.handle_song_change(self)
-        songs_played =[f"{i['playedBy']['displayName']}---{i['track']['name']}---{i['track']['artists'][0]['name']}" for i in self.song_history]
-
+        #songs_played =[f"{i['playedBy']['displayName']}---{i['track']['name']}---{i['track']['artists'][0]['name']}" for i in self.song_history]
+        print(f"#########{data['params']['track']['name']}--{data['params']['track']['artists'][0]['name']}#########")
 
     def on_error(self, ws, data):
+        print('error!')
+        pprint(data)
         pass
     
 
@@ -141,11 +148,12 @@ class doopBot:
 
     def on_message(self, ws, message):
         data = json.loads(message)
+        # print(data.get('method'))
         if data.get('method') in self.event_handlers:
             response = self.event_handlers[data['method']](data)
             self.ws.send(json.dumps(response))
-        else:
-            print(data.get('method'))
+        # else:
+        #     print(data.get('method'))
 
     def run(self):
         # websocket.enableTrace(True)
