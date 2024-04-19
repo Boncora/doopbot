@@ -23,6 +23,8 @@ class QuickThemes:
         """
         Selects a theme. If any themes were submitted in the chat, prioritize those first. 
         """
+        if len(self.user_theme_list) == 0:
+            self.user_theme_list = self.theme_list('manual_themes.yml')
         if self.user_theme_list:
             selected_theme = self.user_theme_list.pop()
             with open('config/manual_themes.yml', 'w') as f:

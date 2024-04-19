@@ -12,5 +12,6 @@ commands = {
     'get-playlist': get_playlist,
     'auto-addto': start_recording,
     'stop-addto': stop_recording,
-    'stop-recording': stop_recording
+    'stop-recording': stop_recording,
+    'qt-queue': queue_manual_qt_theme
 }

@@ -18,7 +18,7 @@ def display_help(bot, data):
         'vote option a, option b, option c --- Creates a strawpoll link. Separate options with commas',
         'vote cancel/stop/end --- Ends the current strawpoll in case we need to create a new one.',
         'addto THEME --- Adds the current playing track to one of our room playlists',
-        'get-playlist THEME NAME --- Gets the URL to a given room theme playlist'
+        'get-playlist THEME NAME --- Gets the URL to a given room theme playlist',
         'auto-addto THEME NAME --- Starts automatically adding tracks to a playlist until stop-recording or stop-addto is ran.'
     ]
     bot.send_message('<br>'.join(help_message))
@@ -95,8 +95,16 @@ def qt_set_theme(bot, data):
     else:
         bot.qt.next_theme = bot.qt.choose_theme()
         return f"🍕On-deck randomly selected and changed to {bot.qt.next_theme}🍺"
+
+def queue_manual_qt_theme(bot, data):
+    message = data['params']['payload'].strip()
+    requested_theme = message.replace('+qt-queue', '').strip()
+    bot.qt.user_theme_list.append(requested_theme)
+    with open('config/manual_themes.yml', 'w') as f:
+        yaml.dump(bot.qt.user_theme_list, f)
+    bot.send_message(f"Added {requested_theme.upper()} to today's theme list")
     
-    
+
 def create_strawpoll(bot, data):
     message = data['params']['payload'].strip()
     if message == '+vote cancel' or message == '+vote stop' or message == '+vote end':

@@ -1,6 +1,9 @@
 +auto-addto 2024-04-08 solar eclipse:
   link: https://open.spotify.com/playlist/6KaBzpGsLwAk0VkCDcL3tX
   uri: spotify:playlist:6KaBzpGsLwAk0VkCDcL3tX
++qt-queue anothertest:
+  link: https://open.spotify.com/playlist/0yBsKWmuGsGXoGFJKcbeFG
+  uri: spotify:playlist:0yBsKWmuGsGXoGFJKcbeFG
 2021 in memoriam:
   link: https://open.spotify.com/playlist/1WQ1zh3yeeo6p2SoLVD09H
   uri: spotify:playlist:1WQ1zh3yeeo6p2SoLVD09H
@@ -124,6 +127,9 @@ bad luck/superstition:
 bad topics to open a conversation with:
   link: https://open.spotify.com/playlist/4ZUj2eS4KHfMXu0emSpMtx
   uri: spotify:playlist:4ZUj2eS4KHfMXu0emSpMtx
+bananas:
+  link: https://open.spotify.com/playlist/4KbvG5KXK4elpCqsH8Okw8
+  uri: spotify:playlist:4KbvG5KXK4elpCqsH8Okw8
 band/orchestra solos:
   link: https://open.spotify.com/playlist/2nh1Q565SAamEoI2BVAIcx
   uri: spotify:playlist:2nh1Q565SAamEoI2BVAIcx
@@ -892,6 +898,9 @@ longing:
 losing:
   link: https://open.spotify.com/playlist/4SliPOolsgXMPzymo5cwqM
   uri: spotify:playlist:4SliPOolsgXMPzymo5cwqM
+lost and found:
+  link: https://open.spotify.com/playlist/4EVyQcKcKeAq1Te8v8wWVa
+  uri: spotify:playlist:4EVyQcKcKeAq1Te8v8wWVa
 lost love:
   link: https://open.spotify.com/playlist/50d6n9RkNrVbe1gbzrLaTY
   uri: spotify:playlist:50d6n9RkNrVbe1gbzrLaTY
@@ -937,6 +946,9 @@ math:
 mathematics:
   link: https://open.spotify.com/playlist/2iIS0pXOoUldtY0JKMwmJl
   uri: spotify:playlist:2iIS0pXOoUldtY0JKMwmJl
+meat:
+  link: https://open.spotify.com/playlist/4mFocLBFjPVzKlWX1FRiYH
+  uri: spotify:playlist:4mFocLBFjPVzKlWX1FRiYH
 medical/medicine:
   link: https://open.spotify.com/playlist/6EYQrk5vYFIOcpGSqky5SI
   uri: spotify:playlist:6EYQrk5vYFIOcpGSqky5SI
@@ -1462,6 +1474,12 @@ temptation/willpower:
 test:
   link: https://open.spotify.com/playlist/4AhmecvHI0RSzO94bE7Ypo
   uri: spotify:playlist:4AhmecvHI0RSzO94bE7Ypo
+test1:
+  link: https://open.spotify.com/playlist/3MtiAjCV271IrIyfsA9p3t
+  uri: spotify:playlist:3MtiAjCV271IrIyfsA9p3t
+test2:
+  link: https://open.spotify.com/playlist/70kznND2bfdko3UfOiGis0
+  uri: spotify:playlist:70kznND2bfdko3UfOiGis0
 testing:
   link: https://open.spotify.com/playlist/1EXR7fbOfrq69L10SApyVJ
   uri: spotify:playlist:1EXR7fbOfrq69L10SApyVJ
