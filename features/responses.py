@@ -51,7 +51,7 @@ def find_and_add_to_playlist(bot, data):
     message = data['params']['payload'].strip()
     theme = message.replace('+addto', '').strip()
     playlist = spotify_bot.get_theme_playlist(theme)
-    bot.send_message(f"Adding {bot.now_playing['track']['name']} to {theme.upper()} playlist.<hr>{playlist['link']}")
+    bot.send_message(f"<hr>Adding {bot.now_playing['track']['name']} to {theme.upper()} playlist.<br>{playlist['link']}<hr>")
     spotify_bot.add_to_playlist(playlist['uri'], bot.now_playing['track']['uri'])
 
 def get_playlist(bot, data):
